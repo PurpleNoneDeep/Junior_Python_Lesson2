@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Мой Профиль</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, sans-serif; }
+  body { background: #1a1a2e; color: #eee; min-height: 100vh; }
+
+  /* === Экран приветствия === */
+  #welcomeScreen {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; height: 100vh; gap: 20px;
+  }
+  #welcomeScreen h1 { color: #ffcc66; font-size: 28px; }
+  #welcomeScreen input {
+    padding: 12px 16px; font-size: 16px; border-radius: 8px;
+    border: 1px solid #444; background: #2a2a3a; color: #eee; width: 300px;
+  }
+  #welcomeScreen input:focus { outline: 2px solid #ffcc66; }
+  #welcomeScreen button {
+    padding: 12px 40px; font-size: 16px; font-weight: bold;
+    background: #ffcc66; color: #1a1a2e; border: none;
+    border-radius: 8px; cursor: pointer; transition: 0.2s;
+  }
+  #welcomeScreen button:hover { background: #ffdd88; }
+
+  /* === Основной экран === */
+  #mainScreen { display: none; padding: 30px; }
+  .header {
+    display: flex; align-items: center; gap: 20px;
+    margin-bottom: 30px; flex-wrap: wrap;
+  }
+  .header h1 { color: #ffcc66; font-size: 22px; }
+  .mood-bar {
+    display: flex; align-items: center; gap: 10px;
+    background: #2a2a3a; padding: 10px 20px; border-radius: 12px;
+  }
+  .mood-value { font-size: 24px; font-weight: bold; color: #7ee787; }
+
+  .character-container {
+    display: flex; align-items: center; gap: 40px;
+    margin-bottom: 40px; flex-wrap: wrap;
+  }
+  .character-container img {
+    width: 180px; height: 180px; object-fit: contain;
+    transition: transform 0.3s;
+  }
+  .character-container img:hover { transform: scale(1.05); }
+
+  .tasks-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  .task-card {
+    background: #2a2a3a; border-radius: 12px; padding: 20px;
+    cursor: pointer; transition: 0.2s; border: 2px solid transparent;
+    position: relative;
+  }
+  .task-card:hover { border-color: #ffcc66; transform: translateY(-3px); }
+  .task-card h3 { color: #ffcc66; margin-bottom: 8px; }
+  .task-card p { color: #aaa; font-size: 14px; line-height: 1.4; }
+
+  /* Пункт 1: стиль решённой задачи */
+  .task-card.solved {
+    opacity: 0.55;
+    cursor: not-allowed;
+    border-color: #7ee787 !important;
+  }
+  .task-card.solved:hover { transform: none; }
+  .task-card.solved::after {
+    content: "✓ Решено";
+    position: absolute;
+    top: 12px; right: 12px;
+    color: #7ee787;
+    font-size: 13px;
+    font-weight: bold;
+  }
+
+  /* === Модальное окно задачи === */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.8); z-index: 1000;
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    background: #2a2a3a; border-radius: 16px; padding: 30px;
+    max-width: 700px; width: 100%; max-height: 90vh; overflow-y: auto;
+  }
+  .modal h2 { color: #ffcc66; margin-bottom: 12px; }
+  .modal .condition { color: #ddd; margin-bottom: 20px; line-height: 1.5; }
+  .modal textarea {
+    width: 100%; min-height: 200px; padding: 15px;
+    background: #1a1a2e; color: #7ee787; border: 1px solid #444;
+    border-radius: 8px; font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 14px; resize: vertical;
+  }
+  .modal textarea::placeholder { color: #666; }
+  .modal textarea:focus { outline: 2px solid #ffcc66; }
+  .modal-buttons { display: flex; gap: 12px; margin-top: 20px; }
+  .modal-buttons button {
+    padding: 12px 24px; border-radius: 8px; border: none;
+    cursor: pointer; font-size: 15px; font-weight: bold;
+    transition: 0.2s;
+  }
+  .btn-submit { background: #7ee787; color: #1a1a2e; }
+  .btn-submit:hover { background: #9eef9e; }
+  .btn-close { background: #444; color: #eee; }
+  .btn-close:hover { background: #555; }
+
+  /* === Анимация +N === */
+  .points-popup {
+    position: fixed; font-size: 48px; font-weight: bold;
+    color: #7ee787; pointer-events: none;
+    animation: floatUp 1s ease-out forwards; z-index: 2000;
+    text-shadow: 0 0 20px rgba(126,231,135,0.8);
+  }
+  @keyframes floatUp {
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-100px) scale(1.5); }
+  }
+</style>
+</head>
+<body>
+
+<!-- === Экран приветствия === -->
+<div id="welcomeScreen">
+  <h1>👋 Добро пожаловать!</h1>
+  <input type="text" id="firstName" placeholder="Имя" required>
+  <input type="text" id="lastName" placeholder="Фамилия" required>
+  <button id="enterBtn">Войти</button>
+</div>
+
+<!-- === Основной экран === -->
+<div id="mainScreen">
+  <div class="header">
+    <h1>Профиль: <span id="userName"></span></h1>
+    <div class="mood-bar">
+      <span>Настроение:</span>
+      <span class="mood-value" id="moodValue">0</span>
+    </div>
+  </div>
+
+  <div class="character-container">
+    <img id="characterImg" src="images/sad.png" alt="Персонаж">
+  </div>
+
+  <div class="tasks-grid" id="tasksGrid"></div>
+</div>
+
+<!-- === Модальное окно задачи === -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h2 id="modalTitle"></h2>
+    <p class="condition" id="modalCondition"></p>
+    <textarea id="codeInput" placeholder="напиши здесь свой код"></textarea>
+    <div class="modal-buttons">
+      <button class="btn-submit" id="submitAnswer">Отправить ответ</button>
+      <button class="btn-close" id="closeModal">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<script src="tasks.js"></script>
+<script>
+// ======================================================
+// === НАСТРОЙКИ ===
+// ======================================================
+// Ссылку на Google Apps Script Web App получишь после
+// деплоя скрипта (см. инструкцию). Вставь её сюда:
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwm2oGkdMuczL4GQK-dRMuv2zNBVfU0cXRnc4buk8uxIQj7tOHYThYWHKd0hGcWYuLeVg/exec";
+
+// ======================================================
+// === СОСТОЯНИЕ ===
+// ======================================================
+let user = { firstName: "", lastName: "" };
+let mood = 0;
+const solvedTasks = new Set(); // id решённых задач
+
+// ======================================================
+// === ЭКРАН ПРИВЕТСТВИЯ ===
+// ======================================================
+document.getElementById('enterBtn').addEventListener('click', () => {
+  const fn = document.getElementById('firstName').value.trim();
+  const ln = document.getElementById('lastName').value.trim();
+  if (!fn || !ln) return alert("Введи имя и фамилию!");
+  user.firstName = fn;
+  user.lastName = ln;
+  document.getElementById('userName').textContent = `${fn} ${ln}`;
+  document.getElementById('welcomeScreen').style.display = 'none';
+  document.getElementById('mainScreen').style.display = 'block';
+  renderTasks();
+  updateCharacter();
+});
+
+// Также разрешим Enter в полях
+document.querySelectorAll('#welcomeScreen input').forEach(inp => {
+  inp.addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('enterBtn').click();
+  });
+});
+
+// ======================================================
+// === РЕНДЕР ЗАДАЧ ===
+// ======================================================
+function renderTasks() {
+  const grid = document.getElementById('tasksGrid');
+  grid.innerHTML = TASKS.map(t => `
+    <div class="task-card ${solvedTasks.has(t.id) ? 'solved' : ''}" data-id="${t.id}">
+      <h3>${t.title}</h3>
+      <p>${t.shortDescription}</p>
+    </div>
+  `).join('');
+
+  grid.querySelectorAll('.task-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const id = parseInt(card.dataset.id);
+      // Пункт 1: блокируем повторное открытие решённой задачи
+      if (solvedTasks.has(id)) return;
+      openTask(id);
+    });
+  });
+}
+
+// ======================================================
+// === ОТКРЫТИЕ ЗАДАЧИ ===
+// ======================================================
+function openTask(id) {
+  const task = TASKS.find(t => t.id === id);
+  if (!task) return;
+  document.getElementById('modalTitle').textContent = task.title;
+  document.getElementById('modalCondition').textContent = task.fullDescription;
+  document.getElementById('codeInput').value = '';
+  document.getElementById('submitAnswer').dataset.taskId = id;
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+document.getElementById('closeModal').addEventListener('click', () => {
+  document.getElementById('modalOverlay').classList.remove('active');
+});
+
+// Закрытие по клику вне модалки
+document.getElementById('modalOverlay').addEventListener('click', (e) => {
+  if (e.target.id === 'modalOverlay') {
+    document.getElementById('modalOverlay').classList.remove('active');
+  }
+});
+
+// ======================================================
+// === НОРМАЛИЗАЦИЯ КОДА ===
+// ======================================================
+function normalizeCode(code) {
+  let lines = code.replace(/\r\n/g, '\n').split('\n');
+  // Убираем пустые строки в начале
+  while (lines.length && lines[0].trim() === '') lines.shift();
+  // Убираем пустые строки в конце
+  while (lines.length && lines[lines.length - 1].trim() === '') lines.pop();
+
+  // Dedent: срезаем общий минимальный отступ
+  const nonEmpty = lines.filter(l => l.trim() !== '');
+  if (nonEmpty.length > 0) {
+    const minIndent = Math.min(
+      ...nonEmpty.map(l => l.match(/^(\s*)/)[1].length)
+    );
+    lines = lines.map(l => l.slice(minIndent));
+  }
+  // Убираем trailing пробелы
+  lines = lines.map(l => l.replace(/\s+$/, ''));
+  return lines.join('\n');
+}
+
+// ======================================================
+// === ЗАМЕНА СТРОКОВЫХ ЛИТЕРАЛОВ НА ПЛЕЙСХОЛДЕР ===
+// ======================================================
+// Находит "..." и '...' в коде. Если строка непустая — заменяет на __STR__.
+// Пустые строки ("") оставляем как есть, чтобы отличить их от непустых.
+function replaceStringLiterals(code) {
+  return code.replace(
+    /("(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*')/g,
+    (match) => {
+      const inner = match.slice(1, -1);
+      // Пустая строка != непустая — не заменяем
+      if (inner.trim() === '') return match;
+      const quote = match[0];
+      return quote + '__STR__' + quote;
+    }
+  );
+}
+
+// ======================================================
+// === ГЛАВНАЯ ПРОВЕРКА ОТВЕТА ===
+// ======================================================
+function isCodeCorrect(userCode, correctCode) {
+  const normUser = normalizeCode(userCode);
+  const normCorrect = normalizeCode(correctCode);
+
+  // 1. Точное совпадение после нормализации
+  if (normUser === normCorrect) return true;
+
+  // 2. Совпадение после замены содержимого строк на плейсхолдер
+  const substUser = replaceStringLiterals(normUser);
+  const substCorrect = replaceStringLiterals(normCorrect);
+  return substUser === substCorrect;
+}
+
+// ======================================================
+// === ОТПРАВКА ОТВЕТА ===
+// ======================================================
+document.getElementById('submitAnswer').addEventListener('click', async () => {
+  const taskId = parseInt(document.getElementById('submitAnswer').dataset.taskId);
+  const task = TASKS.find(t => t.id === taskId);
+  const userCode = document.getElementById('codeInput').value;
+
+  if (!userCode.trim()) return alert("Напиши код!");
+
+  // Пункт 1 (двойная защита): если уже решено — выходим
+  if (solvedTasks.has(taskId)) {
+    alert("Эта задача уже решена!");
+    document.getElementById('modalOverlay').classList.remove('active');
+    return;
+  }
+
+  const isCorrect = isCodeCorrect(userCode, task.correctAnswer);
+
+  // Пункт 2: отправляем в Google Sheets ВСЕГДА (и верные, и неверные)
+  try {
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        firstName: user.firstName,
+        lastName: user.lastName,
+        taskTitle: task.title,
+        userCode: userCode,
+        isCorrect: isCorrect ? "Да" : "Нет",
+        points: isCorrect ? task.points : 0
+      })
+    });
+  } catch (e) {
+    console.warn("Не удалось отправить в таблицу:", e);
+  }
+
+  if (isCorrect) {
+    // Пункт 1: помечаем как решённую
+    solvedTasks.add(taskId);
+    mood += task.points;
+    document.getElementById('moodValue').textContent = mood;
+    showPointsPopup(task.points);
+    updateCharacter();
+    renderTasks(); // перерисовка — карточка станет "solved"
+    document.getElementById('modalOverlay').classList.remove('active');
+  } else {
+    // Пункт 2: неверно — модалка остаётся, можно пробовать снова
+    alert("Пока не верно. Попробуй ещё!");
+  }
+});
+
+// ======================================================
+// === АНИМАЦИЯ +N ===
+// ======================================================
+function showPointsPopup(points) {
+  const popup = document.createElement('div');
+  popup.className = 'points-popup';
+  popup.textContent = `+${points}`;
+  popup.style.left = (window.innerWidth / 2 - 40) + 'px';
+  popup.style.top = (window.innerHeight / 2) + 'px';
+  document.body.appendChild(popup);
+  setTimeout(() => popup.remove(), 1000);
+}
+
+// ======================================================
+// === СМЕНА КАРТИНКИ ПЕРСОНАЖА ===
+// ======================================================
+function updateCharacter() {
+  const img = document.getElementById('characterImg');
+  let src;
+  if (mood >= 90) src = 'images/happy4.png';
+  else if (mood >= 60) src = 'images/happy3.png';
+  else if (mood >= 40) src = 'images/happy2.png';
+  else src = 'images/sad.png';
+
+  // Если картинка уже такая же — не дёргаем DOM
+  if (img.getAttribute('src') === src) return;
+  img.src = src;
+}
+</script>
+</body>
+</html>
