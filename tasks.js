@@ -18,7 +18,7 @@ const TASKS = [
     title: "Дождливый день",
     shortDescription: "Совет на случай дождя",
     fullDescription: "Если на улице идёт дождь — посоветуй взять зонтик.\n\nПодсказка: используй переменную rain",
-    correctAnswer: `rain = True\nif rain:\n    print("Возьми зонтик!")`,
+    correctAnswer: `rain = True\nif rain == True:\n    print("Возьми зонтик!")`,
     points: 1
   },
   {
@@ -26,7 +26,7 @@ const TASKS = [
     title: "Кот дома",
     shortDescription: "Что сказать коту",
     fullDescription: "Если у тебя есть кот — скажи «Мяу!».\n\nПодсказка: используй переменную cat",
-    correctAnswer: `cat = True\nif cat:\n    print("Мяу!")`,
+    correctAnswer: `cat = True\nif cat == True:\n    print("Мяу!")`,
     points: 1
   },
   {
@@ -34,7 +34,7 @@ const TASKS = [
     title: "Понедельник",
     shortDescription: "Пожалей себя в понедельник",
     fullDescription: "Если сегодня понедельник — пожалей себя.\n\nПодсказка: используй переменную monday",
-    correctAnswer: `monday = True\nif monday:\n    print("Бедняга...")`,
+    correctAnswer: `monday = True\nif monday == True:\n    print("Бедняга...")`,
     points: 1
   },
   {
@@ -42,7 +42,7 @@ const TASKS = [
     title: "Голод",
     shortDescription: "Предложи пиццу, если голоден",
     fullDescription: "Если ты голоден — предложи пиццу.\n\nПодсказка: используй переменную hungry",
-    correctAnswer: `hungry = True\nif hungry:\n    print("Пицца уже едет!")`,
+    correctAnswer: `hungry = True\nif hungry == True:\n    print("Пицца уже едет!")`,
     points: 1
   },
   {
@@ -50,7 +50,7 @@ const TASKS = [
     title: "Снег",
     shortDescription: "Совет на снежный день",
     fullDescription: "Если на улице снег — посоветуй лепить снеговика.\n\nПодсказка: используй переменную snow",
-    correctAnswer: `snow = True\nif snow:\n    print("Слепи снеговика!")`,
+    correctAnswer: `snow = True\nif snow == True:\n    print("Слепи снеговика!")`,
     points: 1
   },
   {
@@ -58,7 +58,7 @@ const TASKS = [
     title: "Конфета",
     shortDescription: "Что делать с конфетой",
     fullDescription: "Если у тебя есть конфета — посоветуй её съесть.\n\nПодсказка: используй переменную candy",
-    correctAnswer: `candy = True\nif candy:\n    print("Съешь конфету!")`,
+    correctAnswer: `candy = True\nif candy == True:\n    print("Съешь конфету!")`,
     points: 1
   },
   {
@@ -66,7 +66,7 @@ const TASKS = [
     title: "Усталость",
     shortDescription: "Совет при усталости",
     fullDescription: "Если ты устал — посоветуй поспать.\n\nПодсказка: используй переменную tired",
-    correctAnswer: `tired = True\nif tired:\n    print("Иди поспи, соня!")`,
+    correctAnswer: `tired = True\nif tire == Trued:\n    print("Иди поспи, соня!")`,
     points: 1
   },
   {
@@ -74,7 +74,7 @@ const TASKS = [
     title: "Брат",
     shortDescription: "Поздоровайся с братом",
     fullDescription: "Если у тебя есть брат — поздоровайся с ним.\n\nПодсказка: используй переменную brother",
-    correctAnswer: `brother = True\nif brother:\n    print("Привет, братишка!")`,
+    correctAnswer: `brother = True\nif brother == True:\n    print("Привет, братишка!")`,
     points: 1
   },
   {
@@ -82,7 +82,7 @@ const TASKS = [
     title: "Жара",
     shortDescription: "Совет в жаркий день",
     fullDescription: "Если на улице жара — посоветуй мороженое.\n\nПодсказка: используй переменную hot",
-    correctAnswer: `hot = True\nif hot:\n    print("Съешь мороженое!")`,
+    correctAnswer: `hot = True\nif hot == True:\n    print("Съешь мороженое!")`,
     points: 1
   },
   {
@@ -90,7 +90,7 @@ const TASKS = [
     title: "Победа",
     shortDescription: "Похвастайся победой",
     fullDescription: "Если ты выиграл в игре — похвастайся.\n\nПодсказка: используй переменную win",
-    correctAnswer: `win = True\nif win:\n    print("Я чемпион!")`,
+    correctAnswer: `win = True\nif win == True:\n    print("Я чемпион!")`,
     points: 1
   },
   {
@@ -98,7 +98,7 @@ const TASKS = [
     title: "Домашка",
     shortDescription: "Вздохни про домашнее задание",
     fullDescription: "Если у тебя есть домашнее задание — вздохни.\n\nПодсказка: используй переменную homework",
-    correctAnswer: `homework = True\nif homework:\n    print("Эх... опять уроки.")`,
+    correctAnswer: `homework = True\nif homework == True:\n    print("Эх... опять уроки.")`,
     points: 1
   },
   {
@@ -106,7 +106,7 @@ const TASKS = [
     title: "Темнота",
     shortDescription: "Включи свет в тёмной комнате",
     fullDescription: "Если в комнате темно — посоветуй включить свет.\n\nПодсказка: используй переменную dark",
-    correctAnswer: `dark = True\nif dark:\n    print("Включи свет!")`,
+    correctAnswer: `dark = True\nif dark == True:\n    print("Включи свет!")`,
     points: 1
   },
   {
@@ -114,7 +114,7 @@ const TASKS = [
     title: "Друг",
     shortDescription: "Поиграй с другом",
     fullDescription: "Если у тебя есть друг — посоветуй поиграть с ним.\n\nПодсказка: используй переменную friend",
-    correctAnswer: `friend = True\nif friend:\n    print("Позови друга играть!")`,
+    correctAnswer: `friend = True\nif friend == True:\n    print("Позови друга играть!")`,
     points: 1
   },
   {
@@ -122,7 +122,7 @@ const TASKS = [
     title: "Монетка",
     shortDescription: "Сохрани найденную монетку",
     fullDescription: "Если ты нашёл монетку — посоветуй её сохранить.\n\nПодсказка: используй переменную coin",
-    correctAnswer: `coin = True\nif coin:\n    print("В копилку её!")`,
+    correctAnswer: `coin = True\nif coin == True:\n    print("В копилку её!")`,
     points: 1
   },
   {
@@ -138,7 +138,7 @@ const TASKS = [
     title: "Живот болит",
     shortDescription: "Совет при боли в животе",
     fullDescription: "Если у тебя болит живот — посоветуй попить чай.\n\nПодсказка: используй переменную stomach",
-    correctAnswer: `stomach = True\nif stomach:\n    print("Попей чай с мятой.")`,
+    correctAnswer: `stomach = True\nif stomach == True:\n    print("Попей чай с мятой.")`,
     points: 1
   },
   {
@@ -146,7 +146,7 @@ const TASKS = [
     title: "Недосып",
     shortDescription: "Посоветуй зевнуть",
     fullDescription: "Если ты не выспался — посоветуй зевнуть.\n\nПодсказка: используй переменную sleepy",
-    correctAnswer: `sleepy = True\nif sleepy:\n    print("Зевни хорошенько!")`,
+    correctAnswer: `sleepy = True\nif sleepy == True:\n    print("Зевни хорошенько!")`,
     points: 1
   },
   {
@@ -154,7 +154,7 @@ const TASKS = [
     title: "Ветер",
     shortDescription: "Застегни куртку в ветер",
     fullDescription: "Если на улице ветер — посоветуй застегнуть куртку.\n\nПодсказка: используй переменную wind",
-    correctAnswer: `wind = True\nif wind:\n    print("Застегни куртку!")`,
+    correctAnswer: `wind = True\nif wind == True:\n    print("Застегни куртку!")`,
     points: 1
   },
   {
@@ -162,7 +162,7 @@ const TASKS = [
     title: "Кошка",
     shortDescription: "Погладь кошку",
     fullDescription: "Если у тебя есть кошка — погладь её.\n\nПодсказка: используй переменную cat_home",
-    correctAnswer: `cat_home = True\nif cat_home:\n    print("Погладь кошку!")`,
+    correctAnswer: `cat_home = True\nif cat_home == True:\n    print("Погладь кошку!")`,
     points: 1
   },
   {
@@ -170,7 +170,7 @@ const TASKS = [
     title: "Баг",
     shortDescription: "Найди и исправь баг",
     fullDescription: "Если ты нашёл ошибку в коде — посоветуй её исправить.\n\nПодсказка: используй переменную bug",
-    correctAnswer: `bug = True\nif bug:\n    print("Лови бага!")`,
+    correctAnswer: `bug = True\nif bug == True:\n    print("Лови бага!")`,
     points: 1
   },
 
